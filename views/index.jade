@@ -1,7 +1,4 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
-  script(src='/socket.io/socket.io.js')
-  script(src='/js/main.js')
+  h1(class='ip')= title

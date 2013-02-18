@@ -3,11 +3,11 @@
  */
 
 var express = require('express')
-  , app = require('express')()
-  , routes = require('./routes')
-  , server = require('http').createServer(app)
-  , path = require('path');
-//  , io = require('socket.io').listen(server)
+  , app = express()
+  , http = require('http')
+  , server = http.createServer(app)
+  , path = require('path')
+  , io = require('socket.io').listen(server);
 
 var ip = 0;
 
@@ -27,14 +27,14 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-app.get('/ip', routes.index);
+app.get('/', function(req, res){
+  io.sockets.on('connection', function (socket) {
+    ip = socket.handshake.address;
+    socket.emit('conn', {ip: ip.address});
+    console.log('New connection from ' + ip.address + ':' + ip.port);
+  });
+  
+  res.render('index', {title: 'ip'});
+});
 
-/*io.sockets.on("connection", function (socket) {
-  ip = socket.handshake.address;
-  console.log("New connection from " + ip.address + ":" + ip.port);
-});*/
-
-
-/*http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
-});*/
+server.listen(3000);
